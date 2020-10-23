@@ -45,4 +45,73 @@ kafka-console-consumer.sh \
 ```
 
 
+```
+ kafka-acls.sh --bootstrap-server localhost:9092 --add --allow-principal User:admin --allow-principal User:user-1 --operation read --operation write --topic finance-topic test
+
+ I have no name!@kafka-0:/$ kafka-acls.sh --authorizer kafka.security.auth.SimpleAclAuthorizer --authorizer-properties zookeeper.connect=10.103.58.49:2181 --list --topic test
+I have no name!@kafka-0:/$ 
+ have no name!@kafka-0:/$ kafka-acls.sh --authorizer kafka.security.auth.SimpleAclAuthorizer --authorizer-properties zookeeper.connect=10.103.58.49:2181 --add --allow-principal User:admin --operation All --topic *
+Adding ACLs for resource `ResourcePattern(resourceType=TOPIC, name=bin, patternType=LITERAL)`: 
+        (principal=User:admin, host=*, operation=ALL, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=bin, patternType=LITERAL)`: 
+        (principal=User:admin, host=*, operation=ALL, permissionType=ALLOW) 
+
+I have no name!@kafka-0:/$ kafka-acls.sh --authorizer kafka.security.auth.SimpleAclAuthorizer --authorizer-properties zookeeper.connect=10.103.58.49:2181 --add --allow-principal User:user1 --operation All --topic test
+Adding ACLs for resource `ResourcePattern(resourceType=TOPIC, name=test, patternType=LITERAL)`: 
+        (principal=User:user1, host=*, operation=ALL, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=test, patternType=LITERAL)`: 
+        (principal=User:user1, host=*, operation=ALL, permissionType=ALLOW) 
+
+I have no name!@kafka-0:/$ kafka-acls.sh --authorizer kafka.security.auth.SimpleAclAuthorizer --authorizer-properties zookeeper.connect=10.103.58.49:2181 --list --topic testCurrent ACLs for resource `ResourcePattern(resourceType=TOPIC, name=test, patternType=LITERAL)`: 
+        (principal=User:user1, host=*, operation=ALL, permissionType=ALLOW) 
+
+I have no name!@kafka-0:/$ 
+```
+
+```
+I have no name!@kafka-0:/$ zookeeper-shell.sh 10.103.58.49:2181 ls /path
+Connecting to 10.103.58.49:2181
+
+WATCHER::
+
+WatchedEvent state:SyncConnected type:None path:null
+
+WATCHER::
+
+WatchedEvent state:SaslAuthenticated type:None path:null
+Node does not exist: /path
+I have no name!@kafka-0:/$ 
+I have no name!@kafka-0:/$ cat /opt/bitnami/kafka/config/kafka_jaas.conf 
+KafkaClient {
+   org.apache.kafka.common.security.plain.PlainLoginModule required
+   username="admin"
+   password="PDUZQ60f9T";
+   };
+KafkaServer {
+   org.apache.kafka.common.security.plain.PlainLoginModule required
+   user_admin="PDUZQ60f9T"
+   user_user1="d4fJxT8O8L"
+   user_user2="Qmx2aQ7JU0";
+   org.apache.kafka.common.security.scram.ScramLoginModule required;
+   };
+Client {
+   org.apache.kafka.common.security.plain.PlainLoginModule required
+   username="zoo-user-1"
+   password="zoo-pass-1";
+   };
+I have no name!@kafka-0:/$ 
+
+I have no name!@kafka-0:/$ kafka-topics.sh --zookeeper=10.103.58.49:2181 --list
+__consumer_offsets
+test
+I have no name!@kafka-0:/$ 
+I have no name!@kafka-0:/$ kafka-topics.sh --zookeeper=10.103.58.49:2181 --describe test
+Topic: __consumer_offsets       PartitionCount: 50      ReplicationFactor: 1    Configs: compression.type=producer,cleanup.policy=compact,segment.bytes=104857600
+
+
+```
+
+
 

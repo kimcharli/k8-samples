@@ -1,0 +1,21 @@
+rbac:
+  create: true
+
+externalAccess:
+  enabled: true
+  autoDiscovery:
+    enabled: true
+  service:
+    type: LoadBalancer
+    port: 9094
+replicaCount: 1
+auth:
+  clientProtocol: plaintext
+  interBrokerProtocol: plaintext
+
+
+
+
+
+
+
