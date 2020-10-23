@@ -1,0 +1,69 @@
+rbac:
+  create: true
+
+externalAccess:
+  enabled: true
+  # in case of auto by initContainer
+  autoDiscovery:
+    enabled: true
+  service:
+    type: LoadBalancer
+    port: 9094
+    # # in case of manual IP
+    # loadBalancerIPs:
+    #   - kafka0-eks3.charliekim.org
+    #   - kafka1-eks3.charliekim.org
+    # domain: charliekim.org
+    # externalIPs:
+    #   - kafka0.eks3.seltest.net
+    #   - kafka1.eks3.seltest.net
+
+
+
+# advertisedListeners: INTERNAL://kafka1-0.kafka1-headless.default.svc.cluster.local:9093,CLIENT://kafka1-0.kafka1-headless.default.svc.cluster.local:9092,EXTERNAL://kafka0-eks3.charliekim.org:9094
+
+replicaCount: 1
+# allowPlaintextListener: false
+auth:
+#   ## Authentication protocol for client and inter-broker communications
+#   ## Supported values: 'plaintext', 'tls', 'mtls', 'sasl' and 'sasl_tls'
+#   ## This table shows the security provided on each protocol:
+#   ## | Method    | Authentication                | Encryption via TLS |
+#   ## | plaintext | None                          | No                 |
+#   ## | tls       | None                          | Yes                |
+#   ## | mtls      | Yes (two-way authentication)  | Yes                |
+#   ## | sasl      | Yes (via SASL)                | No                 |
+#   ## | sasl_tls  | Yes (via SASL)                | Yes                |
+#   ##
+  clientProtocol: plaintext
+  interBrokerProtocol: plaintext
+
+  ## Name of the existing secret containing the truststore and
+  ## one keystore per Kafka broker you have in the Kafka cluster.
+  ## MANDATORY when 'tls', 'mtls', or 'sasl_tls' authentication protocols are used.
+  ## Create this secret following the steps below:
+  ## 1) Generate your trustore and keystore files. Helpful script: https://raw.githubusercontent.com/confluentinc/confluent-platform-security-tools/master/kafka-generate-ssl.sh
+  ## 2) Rename your truststore to `kafka.truststore.jks`.
+  ## 3) Rename your keystores to `kafka-X.keystore.jks` where X is the ID of each Kafka broker.
+  ## 4) Run the command below where SECRET_NAME is the name of the secret you want to create:
+  ##       kubectl create secret generic SECRET_NAME --from-file=./kafka.truststore.jks --from-file=./kafka-0.keystore.jks --from-file=./kafka-1.keystore.jks ...
+  ## Alternatively, you can put your JKS files under the files/jks directory
+  ##
+  # jksSecret: kafka-broker-cert-jks
+
+  ## Password to access the JKS files when they are password-protected.
+  ##
+  # jksPassword: keystore
+
+  ## The endpoint identification algorithm used by clients to validate server host name.
+  ## Disable server host name verification by setting it to an empty string
+  ## See: https://docs.confluent.io/current/kafka/authentication_ssl.html#optional-settings
+  ##
+  # tlsEndpointIdentificationAlgorithm: https
+  # tlsEndpointIdentificationAlgorithm:
+
+
+
+
+
+
