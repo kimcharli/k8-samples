@@ -68,7 +68,33 @@ I have no name!@kafka-0:/$ kafka-acls.sh --authorizer kafka.security.auth.Simple
         (principal=User:user1, host=*, operation=ALL, permissionType=ALLOW) 
 
 I have no name!@kafka-0:/$ 
+I have no name!@kafka-0:/$ kafka-configs.sh --zookeeper 10.103.58.49:2181 --alter --add-config 'SCRAM-SHA-256=[password=admin123],SCRAM-SHA-512=[password=admin123]' --entity-type users --entity-name admin
+Warning: --zookeeper is deprecated and will be removed in a future version of Kafka.
+Use --bootstrap-server instead to specify a broker to connect to.
+Completed updating config for entity: user-principal 'admin'.
+I have no name!@kafka-0:/$ 
+I have no name!@kafka-0:/$ kafka-configs.sh --zookeeper 10.103.58.49:2181 --describe --entity-name admin --entity-type users 
+Warning: --zookeeper is deprecated and will be removed in a future version of Kafka.
+Use --bootstrap-server instead to specify a broker to connect to.
+Configs for user-principal 'admin' are SCRAM-SHA-512=salt=MWxyejJsanN2cmRsOWhucGhtdDFldDllNzA=,stored_key=gAMgHwGboOrN+0JVkmfixm8WA/SHO4OxU7e22gqNwkXJ4zgAPa0aSa/MdTV3V/hoInr6jDJfBRiFppRRx1Swvg==,server_key=uLJ9UnIbiaNXsZ5Li7aHBkI/nOVME2hBOkewBuRxuXcsb6+Iu8hUN2o3Us4CsKEJ1FCcRyLQ4uRdeGvZ3obIwg==,iterations=4096,SCRAM-SHA-256=salt=anh3NjhhaHVqeGR0c3drcjJ5eWdxOHZ0OQ==,stored_key=oC6OmjQny/RN/+Vz4PAWA/37dok6zhNkxwBAal2k2nY=,server_key=qabebGzd+x9bYDreISKAWbI+/mKwdRDPs14ApA3PCCw=,iterations=4096
+I have no name!@kafka-0:/$ 
+I have no name!@kafka-0:/$ 
+
+
+(kafka-python) ckim-mbp:k8-samples ckim$ kafka-configs.sh --zookeeper 10.103.58.49:2181 --alter --add-config 'SCRAM-SHA-256=[password=password1],SCRAM-SHA-512=[password=password1]' --entity-type users --entity-name user1
+bash: kafka-configs.sh: command not found
+(kafka-python) ckim-mbp:k8-samples ckim$ 
+(kafka-python) ckim-mbp:k8-samples ckim$ k exec -it kafka-0 -- bashI have no name!@kafka-0:/$ kafka-configs.sh --zookeeper 10.103.58.49:2181 --alter --add-config 'SCRAM-SHA-256=[password=password1],SCRAM-SHA-512=[password=password1]' --entity-type users --entity-name user1
+Warning: --zookeeper is deprecated and will be removed in a future version of Kafka.
+Use --bootstrap-server instead to specify a broker to connect to.
+Completed updating config for entity: user-principal 'user1'.
+I have no name!@kafka-0:/$ kafka-configs.sh --zookeeper 10.103.58.49:2181 --describe --entity-name user1 --entity-type usersWarning: --zookeeper is deprecated and will be removed in a future version of Kafka.
+Use --bootstrap-server instead to specify a broker to connect to.
+Configs for user-principal 'user1' are SCRAM-SHA-512=salt=MWV6Z2t4c2J0em10anJjejdqbTRtcmpsdGc=,stored_key=90rq1h9dfvzyAHvFi5zTdDeLHdzZnCTguff+ZwwuaQ6LrQvdGLBxBuqbKk0p+4gqDUrFW2K3My5630qEylNGrw==,server_key=ig6DfQePNd5FTgIaGQwZA0JxJj8Saeph/+hX8tRsSuMa8MA1g21F9CQtO1U6RTaw4dFXjLbZ8j4DzgVtLMrHxQ==,iterations=4096,SCRAM-SHA-256=salt=bWJmMHdtbWxteGNpcGZiNng0cGdjd2R3dg==,stored_key=MFecbAOEog2ZYKtSal/Vp6YruK1tJIoO6jRrByqsjJI=,server_key=ne5uRq2BA+trmjTTH02rOinoDYiaqLgQvNfWLKP4QGM=,iterations=4096
+I have no name!@kafka-0:/$ 
+
 ```
+
 
 ```
 I have no name!@kafka-0:/$ zookeeper-shell.sh 10.103.58.49:2181 ls /path
