@@ -88,7 +88,8 @@ bash: kafka-configs.sh: command not found
 Warning: --zookeeper is deprecated and will be removed in a future version of Kafka.
 Use --bootstrap-server instead to specify a broker to connect to.
 Completed updating config for entity: user-principal 'user1'.
-I have no name!@kafka-0:/$ kafka-configs.sh --zookeeper 10.103.58.49:2181 --describe --entity-name user1 --entity-type usersWarning: --zookeeper is deprecated and will be removed in a future version of Kafka.
+I have no name!@kafka-0:/$ kafka-configs.sh --zookeeper 10.103.58.49:2181 --describe --entity-name user1 --entity-type users
+Warning: --zookeeper is deprecated and will be removed in a future version of Kafka.
 Use --bootstrap-server instead to specify a broker to connect to.
 Configs for user-principal 'user1' are SCRAM-SHA-512=salt=MWV6Z2t4c2J0em10anJjejdqbTRtcmpsdGc=,stored_key=90rq1h9dfvzyAHvFi5zTdDeLHdzZnCTguff+ZwwuaQ6LrQvdGLBxBuqbKk0p+4gqDUrFW2K3My5630qEylNGrw==,server_key=ig6DfQePNd5FTgIaGQwZA0JxJj8Saeph/+hX8tRsSuMa8MA1g21F9CQtO1U6RTaw4dFXjLbZ8j4DzgVtLMrHxQ==,iterations=4096,SCRAM-SHA-256=salt=bWJmMHdtbWxteGNpcGZiNng0cGdjd2R3dg==,stored_key=MFecbAOEog2ZYKtSal/Vp6YruK1tJIoO6jRrByqsjJI=,server_key=ne5uRq2BA+trmjTTH02rOinoDYiaqLgQvNfWLKP4QGM=,iterations=4096
 I have no name!@kafka-0:/$ 
