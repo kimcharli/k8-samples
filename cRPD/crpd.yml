@@ -1,0 +1,51 @@
+---
+# https://www.juniper.net/documentation/en_US/crpd/topics/task/multi-task/crpd-linux-server-install.html
+# docker pull hub.juniper.net/routing/crpd:19.2R1.8
+# docker volume create crpd01-config ; docker volume create crpd01-varlog
+# docker run --rm --detach --name crpd01 -h crpd01 --privileged --net=bridge -v crpd01-config:/config -v crpd01-varlog:/var/log -it crpd:19.2R1.8
+# docker run --rm --detach --name crpd01 -h crpd01 --privileged --net=host -v crpd01-config:/config -v crpd01-varlog:/var/log -it crpd:19.2R1.8
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 2
+  labels:
+    run: reflector
+  name: crpd
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: reflector 
+  template:
+    metadata:
+      labels:
+        run: reflector
+    spec:
+      containers:
+      - name: reflector
+        securityContext:
+          privileged: true
+        image: crpd:20.3R1.8
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 179
+        - containerPort: 40051
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "700m"
+          requests:
+            memory: "200Mi"
+            cpu: "700m"
+        volumeMounts:
+        - name: crpd-storage
+          mountPath: /var/log/crpd-storage
+      volumes:
+      - name: crpd-storage
+        emptyDir: {}
+
+

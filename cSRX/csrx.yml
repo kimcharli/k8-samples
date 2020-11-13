@@ -1,0 +1,145 @@
+---
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+# kubectl create cm csrxlicense --from-file=JNX_LICFEAT_CSRX-A1_STANDARD.txt
+# https://www.juniper.net/us/en/dm/csrx-trial/
+# https://www.juniper.net/documentation/en_US/release-independent/licensing/topics/topic-map/configure-license.html
+apiVersion: v1
+kind: ConfigMap 
+metadata: 
+  name: csrxlicense
+  data:
+    JNX_LICFEAT_CSRX-A1_STANDARD.txt: |
+      20 67 Ni LONG NORMAL STANDALONE AGGR 1_KEYS INFINITE_KEYS 1 NOV 2020 0 0 1 FEB 2021 23 59 NiL SLM_CODE DEMO NiL NiL Ni NiL NiL 15_MINS NiL 0 80p+IxniV91CDIwQ5JrrL1T4E8Z7KAis+OdcyGsoe+Oyi5vSXDIgOj0i+JbOOFhXs9dCnK1oCPvf/23l4Jt90zFVQhQ4JM/3bvT/trpWICaJe+efLj7XCfXwtZ2sM29Y1daFSHXqFI93AHJIyd9Ey3M4Vj+sYM+A1zsENcsBD+PkZ6qOM6fYG4qdgP0X1DA5k
+---
+apiVersion: v1
+kind: ConfigMap 
+metadata: 
+  name: csrx-config-map 
+  data:
+     csrx_config: | interfaces { ge-0/0/0 { unit 0; } ge-0/0/1 { unit 0; } } security { policies { default-policy { permit-all; } } zones { security-zone trust { host-inbound-traffic { system-services { all; } protocols { all; } } interfaces { ge-0/0/0.0; } } security-zone untrust { host-inbound-traffic { system-services { all; } protocols { all; } } interfaces { ge-0/0/1.0; } } } }
+---
+# https://kubernetes.io/docs/concepts/configuration/secret/
+# kubectl create secret generic csrxrootpasswd --fromliteral= CSRX_ROOT_PASSWORD=XXXXX
+apiVersion: v1
+kind: Secret
+metadata:
+  name: csrxrootpasswd
+  #annotations:
+  #  kubernetes.io/service-account.name: "sa-name"
+#type: kubernetes.io/service-account-token
+type: Opaque
+data:
+  CSRX_ROOT_PASSWORD: YmFyCg== # base64 endoded
+---
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# kubectl set image deployment csrx-deployment csrx=<new-csrx-image>
+# kubectl rollout history deployment csrx-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csrx-deployment
+  annotations:
+    k8s.v1.cni.cncf.io/networks: network-conf-1-1,network-conf-2-1
+  labels:
+    app: firewall
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firewall  
+  template:
+    metadata:
+      labels:
+        app: firewall
+    spec:
+      containers:
+      - name: csrx
+        securityContext:
+          privileged: true
+        image: csrx:20.3R1.8
+        env:
+        - name: CSRX_ROOT_PASSWORD
+          #value: "xxxxx"
+          valueFrom:
+            secretKeyRef:
+              name: csrxrootpasswd
+              key: CSRX_ROOT_PASSWORD
+        - name: CSRX_HUGEPAGES
+          value: "no"
+        - name: CSRX_PACKET_DRIVER
+          value: "interrupt"
+        - name: CSRX_FORWARD_MODE
+          value: "routing"
+          #value: "wire"
+        - name: CSRX_LICENSE_FILE
+          value: "/var/local/config/.csrxlicense"
+        volumeMounts:
+        - name: disk
+          mountPath: "/dev"
+        - name: config
+          mountPath: "/var/jail"
+        - name: lic
+          mountPath: "/var/local/config"
+      volumes:
+      - name: disk
+        hostPath:
+          path: /dev
+          type: Directory
+      - name: config
+        configMap:
+          name: csrx-config-map
+          items:
+          - key: csrx_config
+            path: csrx_config
+      - name: lic
+        configMap:
+          name: csrxlicense
+          items:
+            - key: csrxlicensing
+              path: csrxlicensing
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: csrx-ssh
+spec:
+  selector:
+    app: firewall
+  ports:
+    - name: ssh
+      port: 22
+      nodePort: 30122
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: firewall 
+  name: firewall
+spec:
+  selector:
+    app: firewall
+  ports:
+  - name: port-1
+    port: 80
+    protocol: TCP 
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: default
+spec:
+ rules:
+ - host: foo.bar
+   http:
+    paths:
+    - path: /
+      backend:
+        serviceName: firewall 
+        servicePort: 80
+
+
