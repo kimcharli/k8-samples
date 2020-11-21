@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    # opencontrail.org/fip-pool: '{"domain": "default-domain", "project": "k8s-default",
+    #   "network": "k8s-svc-fip-net", "name": "k8s-svc-fip-pool"}'
+    # opencontrail.org/ip_fabric_forwarding: "true"
+    opencontrail.org/ip_fabric_snat: "true"
+  name: default
