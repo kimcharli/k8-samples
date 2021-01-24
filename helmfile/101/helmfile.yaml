@@ -1,0 +1,61 @@
+repositories:
+- name: stable
+  url: https://charts.helm.sh/stable
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami
+- name: openebs
+  url: https://openebs.github.io/charts
+# - name: traefik
+#   url: https://helm.traefik.io/traefik
+
+releases:
+# - name: traefik
+#   namespace: traefik
+#   chart: stable/traefik
+#   labels:
+#     name: traefik-public
+#   version: 1.86.2
+#   hooks:
+#   - events: ["prepare"]         
+#     showlogs: false
+#     command: "./scripts/create_namespace.sh"
+#     args: ["traefik"]
+- name: metallb
+  namespace: metallb-system
+  chart: bitnami/metallb
+  values:
+  - speaker:
+      secretValue: "verySecureValue"
+  set:
+  - name: configInline
+    file: ./charts/metallb/my-pool.yml
+- name: openebs
+  namespace: openebs
+  chart: openebs/openebs
+  # hooks:
+  # - events: ["prepare"]
+  #   command: 
+  #     kubectl delete ValidatingWebhookConfiguration openebs-validation-webhook-cfg
+  #     kubectl delete secret default-token-6rpbt -n openebs
+  values:
+  - webhook:
+      failurePolicy: Ignore
+- name: openebs-ds1
+  namespace: openebs
+  chart: ./charts/openebs-hostpath-ds
+
+# - name: myapp                   
+#   namespace: mynamespace
+#   chart: ./charts/myapp     
+#   version: 0.1.0
+#   hooks:
+#   - events: ["prepare"]         
+#     showlogs: true
+#     command: "./scripts/create_namespace.sh"
+#     args: ["mynamespace"]
+#   values:
+#   - service:
+#       type: LoadBalancer
+
+
+

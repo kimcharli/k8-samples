@@ -1,0 +1,3 @@
+Monitor by;
+  kubectl --namespace {{ .Values.namespace }} logs -f $POD_NAME
+  

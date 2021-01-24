@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "openebs-hostpath-ds.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "openebs-hostpath-ds.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "openebs-hostpath-ds.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "openebs-hostpath-ds.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          # command: [ "while", "true", ";", "do", "ls", "/var/local/openebs", ";", "sleep", "60", ";", "done" ]
+          command: [ "bin/sh", "-c", "while true ; do date ; ls -al /var/openebs/local ; sleep 60 ; done" ]
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - mountPath: /var/openebs/local
+              name: var-local
+      volumes:
+        - name: var-local
+          hostPath:
+            path: /var/openebs/local
+            type: DirectoryOrCreate
+
+
+
