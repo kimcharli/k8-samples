@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: {{ .Values.monitoring_ns }}
+    namespace: monitoring
   project: default
   source:
     path: charts/telegraf
