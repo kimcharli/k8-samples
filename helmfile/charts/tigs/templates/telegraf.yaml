@@ -1,0 +1,21 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: telegraf
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  namespace: {{ Values.argo_ns }}
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ Release.Namespace }}
+  project: default
+  source:
+    path: charts/telegraf
+    repoURL: https://github.com/influxdata/helm-charts
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
