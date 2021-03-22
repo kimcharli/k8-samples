@@ -13,7 +13,7 @@ telegraf:
     outputs:
       - influxdb:
           urls:
-            - "http://mytig-influxdb:8086"
+            - "http://{{ .Release.Name }}-influxdb:8086"
           database: "telegraf"
     inputs:
       - statsd:

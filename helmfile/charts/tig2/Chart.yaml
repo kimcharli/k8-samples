@@ -1,0 +1,13 @@
+---
+apiVersion: v2
+name: monitoring
+version: 1.0.0
+dependencies:
+  - name: influxdb
+    repository: https://influxdata.github.io/helm-charts
+    version: 
+    condition: influxdb.enabled
+
+
+
+    

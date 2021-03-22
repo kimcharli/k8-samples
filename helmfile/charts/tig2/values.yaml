@@ -1,0 +1,88 @@
+
+
+influxdb:
+  setDefaultUser:
+    user:
+      username: "admin"
+      password: "contrail123"
+  # config:
+  #   http:
+  #     enabled: "true"
+  #     bind-address: ":8086"
+  #     auth-enabled: "false"
+telegraf:
+  config:
+    outputs:
+      - influxdb:
+          urls:
+            - "http://tig2-influxdb:8086"
+          database: "telegraf"
+    inputs:
+      - statsd:
+          service_address: ":8125"
+          percentiles:
+            - 50
+            - 95
+            - 99
+          metric_separator: "_"
+          allowed_pending_messages: 10000
+          percentile_limit: 1000
+      - syslog:
+          server: "udp://:6514"
+      - jti_openconfig_telemetry:
+          servers:
+            - "10.85.95.144:32767"
+          username: labroot
+          password: lab123
+          client_id: telegraf-ckim
+          sample_frequency: 1000ms
+          sensors:
+            - /interfaces/
+            - collection /components/ /lldp
+          retry_delay: 1000ms
+          str_as_tags: false
+
+      # - snmp:
+      #     agents:
+      #       - "udp://10.85.95.144:161"
+      #     community: public
+      #     field:
+      #       - oid: "RFC1213-MIB::sysUpTime.0"
+      #         name: uptime
+      #       - oid: "RFC1213-MIB::sysName.0"
+      #         name: source
+      #         is_tag: "true"
+      #     table:
+      #       - oid: "IF-MIB::ifTable"
+      #         name: interface
+      #         inherit_tags:
+      #           - source
+      #         field:
+      #           - oid: "IF-MIB::ifDescr"
+      #             name: ifDescr
+      #             is_tag: "true"
+grafana:
+  adminUser: admin
+  adminPassword: contrail123
+  # ingress:
+  #   enabled: true
+  #   annotations:
+  #     kubernetes.io/ingress.class: "traefik"
+  #     traefik.frontend.rule.type: PathPrefixStrip
+  #   path: /grafana
+  #   hosts:
+  #     - k3s.pod3.seltest.net
+  service:
+    type: LoadBalancer
+    port: 3000
+    targetPort: 3000
+      # targetPort: 4181 To be used with a proxy extraContainer
+    annotations: {}
+    labels: {}
+    portName: service
+
+
+
+
+
+
