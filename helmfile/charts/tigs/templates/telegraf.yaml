@@ -5,11 +5,11 @@ metadata:
   name: telegraf
   finalizers:
   - resources-finalizer.argocd.argoproj.io
-  namespace: {{ .Values.argo_ns }}
+  # namespace: {{ .Values.argo_ns }}
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ .Values.monitoring_ns }}
   project: default
   source:
     path: charts/telegraf

@@ -2,20 +2,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: influxdb
+  name: root
   finalizers:
   - resources-finalizer.argocd.argoproj.io
-  # namespace: {{ .Values.argo_ns }}
 spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .Values.monitoring_ns }}
   project: default
   source:
-    path: charts/influxdb
-    repoURL: https://influxdata.github.io/helm-charts
+    path: helmfile/charts/tigs
+    repoURL: https://github.com/kimcharli/k8-samples.git
     targetRevision: HEAD
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+
