@@ -5,11 +5,12 @@ metadata:
   name: root
   finalizers:
   - resources-finalizer.argocd.argoproj.io
+  namespace: argocd
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
-  project: default
+    namespace: argo-cd
+  project: argo-cd
   source:
     path: helmfile/charts/apps/
     repoURL: https://github.com/kimcharli/k8-samples.git
