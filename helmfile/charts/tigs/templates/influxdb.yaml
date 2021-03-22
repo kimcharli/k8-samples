@@ -13,7 +13,7 @@ spec:
   project: default
   source:
     path: charts/influxdb
-    repoURL: https://influxdata.github.io/helm-charts
+    repoURL: https://github.com/influxdata/helm-charts
     targetRevision: HEAD
   syncPolicy:
     automated:
