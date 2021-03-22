@@ -5,7 +5,7 @@ metadata:
   name: telegraf
   finalizers:
   - resources-finalizer.argocd.argoproj.io
-  # namespace: {{ .Values.argo_ns }}
+  namespace: argocd
 spec:
   destination:
     server: https://kubernetes.default.svc
