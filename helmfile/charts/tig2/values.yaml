@@ -12,6 +12,11 @@ influxdb:
   #     auth-enabled: "false"
 telegraf:
   config:
+    processors:
+      - rename:
+          replace: 
+            measurement: /junos/twamp/client/history-test-results/history-single-test-results/probe-single-results/
+            dest: /protocol.twamp/
     outputs:
       - influxdb:
           urls:
@@ -38,7 +43,7 @@ telegraf:
           sample_frequency: 1000ms
           sensors:
             - /interfaces/
-            - collection /components/ /lldp
+            - /junos/twamp/client/history-test-results/history-single-test-results/probe-single-results/
           retry_delay: 1000ms
           str_as_tags: false
 
