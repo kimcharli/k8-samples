@@ -33,10 +33,17 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # env:
+          #   - name: NODE_RED_CREDENTIAL_SECRET
+          #     value: contrail123
           ports:
             - name: http
               containerPort: 1880
               protocol: TCP
+
+          volumeMounts:
+            - mountPath: /data
+              name: nodered-data
           livenessProbe:
             httpGet:
               path: /
@@ -59,3 +66,46 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: nodered-data
+          persistentVolumeClaim:
+            claimName: nodered-data-pvc
+          
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nodered-data-pv
+  labels:
+    directory: tftpboot
+spec:
+  storageClassName: local-path 
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /var/nodered
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: k3s.io/hostname
+              operator: In
+              values:
+                - k3s
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nodered-data-pvc
+spec:
+  storageClassName: local-path
+  volumeName: nodered-data-pv
+  resources:
+    requests:
+      storage: 20Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce

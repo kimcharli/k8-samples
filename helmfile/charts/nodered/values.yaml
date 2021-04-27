@@ -25,8 +25,8 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 2000
 
 securityContext: {}
   # capabilities:
@@ -39,6 +39,7 @@ securityContext: {}
 service:
   type: LoadBalancer
   port: 1880
+  externalTrafficPolicy: Local
 
 ingress:
   enabled: false
